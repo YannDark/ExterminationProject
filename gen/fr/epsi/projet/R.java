@@ -206,6 +206,7 @@ containing a value of this type.
         public static final int ic_plusone_small_off_client=0x7f02001a;
         public static final int ic_plusone_standard_off_client=0x7f02001b;
         public static final int ic_plusone_tall_off_client=0x7f02001c;
+        public static final int icone_benne=0x7f02001d;
     }
     public static final class id {
         public static final int action_settings=0x7f050006;
@@ -220,7 +221,7 @@ containing a value of this type.
         public static final int google_play_services_version=0x7f070000;
     }
     public static final class layout {
-        public static final int activity_main=0x7f030000;
+        public static final int activity_map=0x7f030000;
     }
     public static final class menu {
         public static final int main=0x7f0a0000;
