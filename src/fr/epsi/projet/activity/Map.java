@@ -17,12 +17,14 @@ import fr.epsi.projet.R.drawable;
 import fr.epsi.projet.R.id;
 import fr.epsi.projet.R.layout;
 import fr.epsi.projet.common.Constantes;
+import fr.epsi.projet.service.ServiceRest;
 
 public class Map extends Activity {
 
 	// Google Map
     private GoogleMap googleMap;
- 
+    private ServiceRest serviceRest = new ServiceRest();
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +47,9 @@ public class Map extends Activity {
             
             // adding marker
             googleMap.addMarker(marker);
+            
+            //test pour l'API REST
+            serviceRest.getBennes();
  
         } catch (Exception e) {
             e.printStackTrace();
