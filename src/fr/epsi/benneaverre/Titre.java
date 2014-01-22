@@ -6,8 +6,8 @@ public class Titre {
 	private String nom;
 	private ArrayList<SousTitre> sousTitres;
 
-	public Titre() {
-		super();
+	public Titre(String nom) {
+		this.nom = nom;
 		this.sousTitres = new ArrayList<SousTitre>();
 	}
 

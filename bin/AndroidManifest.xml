@@ -15,6 +15,7 @@
         </activity>
         <!--created by Jihair at 2014-01-08 14:36:27-->
         <activity android:name=".Ajout"/>
+        <activity android:name=".AffichageinfosComplementaires"/>
         <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyD0X_dTWXgYXNCUPrVDW8R7zsodNxSFbsY"/>
     </application>
 </manifest>

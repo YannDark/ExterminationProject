@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/button1"
         android:layout_below="@+id/button1"
-        android:layout_marginTop="16dp" 
+        android:layout_marginTop="30dp" 
         android:visibility="invisible">
     </ExpandableListView>
 
@@ -35,6 +35,15 @@
         android:layout_below="@+id/textView1"
         android:layout_marginLeft="17dp"
         android:layout_marginTop="25dp"
+        android:background="@android:color/transparent"
         android:text="Choisir une action" />
+
+    <Button
+        android:id="@+id/infosSup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/exclamation" />
 
 </RelativeLayout>
