@@ -1,7 +1,10 @@
 package fr.epsi.projet.activity;
 
+import java.util.List;
+
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -13,9 +16,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import fr.epsi.projet.R;
-import fr.epsi.projet.R.drawable;
-import fr.epsi.projet.R.id;
-import fr.epsi.projet.R.layout;
+import fr.epsi.projet.beans.Emplacement;
 import fr.epsi.projet.common.Constantes;
 import fr.epsi.projet.service.ServiceRest;
 
@@ -29,8 +30,17 @@ public class Map extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+        
+        
  
         try {
+        	
+        	// Compatibility Thread -- pour les problèmes d'appel à l'API REST
+            if (android.os.Build.VERSION.SDK_INT > 9) {
+                StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+                StrictMode.setThreadPolicy(policy);
+            }
+            
             // Loading map
             initilizeMap();
             LatLng position = new LatLng(Constantes.LATITUDE_NANTES, Constantes.LONGITUDE_NANTES);
@@ -39,18 +49,15 @@ public class Map extends Activity {
             		position).zoom(12).build();
             
             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition)); 
-                        
-            // create marker
-            MarkerOptions marker = new MarkerOptions().position(position).title("Hello Maps ");
-          //changement d'icone
-            marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.icone_benne));
             
-            // adding marker
-            googleMap.addMarker(marker);
-            
-            //test pour l'API REST
-            serviceRest.getBennes();
- 
+            List<Emplacement> all = serviceRest.getBennes();
+            MarkerOptions marker;
+            for (Emplacement e : all) {
+            	position = new LatLng(e.get_l()[0], e.get_l()[1]);
+            	marker = new MarkerOptions().position(position).title("Hello Maps ");
+            	marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.icone_benne));
+            	googleMap.addMarker(marker);
+			}
         } catch (Exception e) {
             e.printStackTrace();
         }
