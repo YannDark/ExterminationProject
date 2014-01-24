@@ -1,9 +1,10 @@
 package fr.epsi.projet.service;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -81,8 +82,12 @@ public class ServiceRest {
 		
 		try {
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-			Document doc = dBuilder.parse(new InputSource(new ByteArrayInputStream(xml.getBytes("ISO-8859-1"))));
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();			
+			
+			//InputStream is = new ByteArrayInputStream(xml.getBytes());
+			System.out.println(xml);
+			InputSource is = new InputSource(new StringReader(xml));
+			Document doc = dBuilder.parse(is);
 			doc.getDocumentElement().normalize();
 			
 			NodeList list = doc.getElementsByTagName("nb_results"); 
