@@ -55,7 +55,10 @@ public class ServiceRest {
 
 			String output;
 			while ((output = br.readLine()) != null) {
-				returnString += output;
+				if(returnString == null)
+					returnString = output;
+				else
+					returnString += output;
 			}
 
 			conn.disconnect();

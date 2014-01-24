@@ -51,6 +51,7 @@ public class Map extends Activity {
             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition)); 
             
             List<Emplacement> all = serviceRest.getBennes();
+            System.out.println("Nombre de point : " + all.size());
             MarkerOptions marker;
             for (Emplacement e : all) {
             	position = new LatLng(e.get_l()[0], e.get_l()[1]);
