@@ -1,0 +1,29 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" 
+    android:background="@drawable/fonddebase" >
+
+    <LinearLayout
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <EditText
+            android:id="@+id/editText1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.51"
+            android:ems="10"
+            android:inputType="textMultiLine"
+            android:text="Application développée dans le respect de la norme ISO 29500, stipulant la programmation écologique d'un programme.\n\n By Malou, Yann Dark and Jihair"
+            android:textColor="#ffffff"
+            android:gravity="center_horizontal" >
+
+            <requestFocus />
+        </EditText>
+        
+    </LinearLayout>
+
+</RelativeLayout>

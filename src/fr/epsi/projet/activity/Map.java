@@ -1,44 +1,47 @@
 package fr.epsi.projet.activity;
 
-import java.util.List;
+import java.util.ArrayList;
 
-import android.content.Intent;
+import org.w3c.dom.Document;
+
+import android.app.Activity;
+import android.graphics.Color;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.support.v4.app.FragmentActivity;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import fr.epsi.projet.R;
 import fr.epsi.projet.beans.Emplacement;
 import fr.epsi.projet.common.Constantes;
+import fr.epsi.projet.service.GMapV2Direction;
 import fr.epsi.projet.service.ServiceRest;
 
-public class Map extends FragmentActivity /*implements OnMarkerClickListener*/{
+public class Map extends Activity {
 
 	// Google Map
     private GoogleMap googleMap;
     private ServiceRest serviceRest = new ServiceRest();
+    private GMapV2Direction md = new GMapV2Direction();
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_map);
+        setContentView(R.layout.activity_map);  
         
-        
- 
         try {
-        	
-        	// Compatibility Thread -- pour les problèmes d'appel à l'API REST
+        	// Compatibility Thread
             if (android.os.Build.VERSION.SDK_INT > 9) {
                 StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
                 StrictMode.setThreadPolicy(policy);
@@ -49,32 +52,69 @@ public class Map extends FragmentActivity /*implements OnMarkerClickListener*/{
             LatLng position = new LatLng(Constantes.LATITUDE_NANTES, Constantes.LONGITUDE_NANTES);
             //positionnement + zoom sur Nantes centre pour le moment
             CameraPosition cameraPosition = new CameraPosition.Builder().target(
-            		position).zoom(12).build();
+            		position).zoom(14).build();
             
             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition)); 
+            googleMap.setMyLocationEnabled(true);
+                              
             
-            List<Emplacement> all = serviceRest.getBennes();
-            System.out.println("Nombre de point : " + all.size());
-            MarkerOptions marker;
-            for (Emplacement e : all) {
-            	position = new LatLng(e.get_l()[0], e.get_l()[1]);
-            	marker = new MarkerOptions().position(position).title(e.getAdresse() + " \n" + e.getCommune());
-            	marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.icone_benne));
-            	googleMap.addMarker(marker);
-			}
+            /////////////////
+            // getLocation //
+            /////////////////
             
+            boolean gps_enabled = false, network_enabled = false;
+            LocationManager service = (LocationManager) getSystemService(LOCATION_SERVICE);
+            Double lat, lng;
+            LatLng fromPosition = null, toPosition = null;
             
-            googleMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
-
-                public void onInfoWindowClick(Marker marker) {
-                	//TODO renvoyer vers l'activité après avoir recherché le plus proche des coordonées
-                    /*Intent i = new Intent(getActivity(), NewActivity.class);
-                    startActivity(i);*/
-                	Emplacement e = serviceRest.getGeoBenne(marker.getPosition().latitude, marker.getPosition().latitude);
-                	Toast.makeText(getApplicationContext(), "Goulou Goulou", Toast.LENGTH_SHORT).show();
-                	System.out.println(marker.getPosition().latitude);
-                }
-            });
+            // Verify location enable (GPS/Network)
+            try{
+            	gps_enabled = service.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            }catch(Exception ex){}
+            try{
+            	network_enabled = service.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+            }catch(Exception ex){}
+            
+           
+            if(gps_enabled || network_enabled) 
+            {
+            	// Set start Localisation 
+            	Criteria criteria = new Criteria();
+		        String provider = service.getBestProvider(criteria, false);
+		        Location location = service.getLastKnownLocation(provider);
+		        LatLng userLocation = new LatLng(location.getLatitude(),location.getLongitude());
+		        
+		        fromPosition = userLocation;
+		        
+		        // Set Finish Destination
+		        lat = userLocation.latitude;
+		        lng = userLocation.longitude;		
+		        
+	            Emplacement emplacement = serviceRest.getGeoBenne(lat, lng);
+	            toPosition = new LatLng(emplacement.get_l()[0], emplacement.get_l()[1]);
+            
+	            // Set Direction
+	            if(fromPosition != null && toPosition != null)
+	            {
+	            	MarkerOptions from = new MarkerOptions().position(fromPosition).title("Start");
+	            	MarkerOptions to = new MarkerOptions().position(toPosition).title("End");
+	            	to.icon(BitmapDescriptorFactory.fromResource(R.drawable.icone_benne));
+		        	googleMap.addMarker(to);
+		        	googleMap.addMarker(from);
+		        	
+		        	Document doc = md.getDocument(fromPosition, toPosition, GMapV2Direction.MODE_WALKING);
+		    	
+		    		ArrayList<LatLng> directionPoint = md.getDirection(doc);
+		    		PolylineOptions rectLine = new PolylineOptions().width(5).color(Color.rgb(0, 100, 0));
+		    		
+		    		for(int i = 0 ; i < directionPoint.size() ; i++) {			
+		    			rectLine.add(directionPoint.get(i));
+		    		}		    				    		
+		    		
+		    		googleMap.addPolyline(rectLine);
+	            }
+            }
+ 
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -100,5 +140,12 @@ public class Map extends FragmentActivity /*implements OnMarkerClickListener*/{
     protected void onResume() {
         super.onResume();
         initilizeMap();
+    }
+    
+    public void displayBottleBank() {
+    	//TODO getting the different bottle banks locations from distant DB
+    	
+    	//TODO display them on the map
+    	
     }
 }
