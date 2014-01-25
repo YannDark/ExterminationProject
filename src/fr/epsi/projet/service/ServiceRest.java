@@ -2,7 +2,6 @@ package fr.epsi.projet.service;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.HttpURLConnection;
@@ -22,6 +21,11 @@ import fr.epsi.projet.beans.Emplacement;
 import fr.epsi.projet.beans.Emplacements;
 import fr.epsi.projet.common.Constantes;
 
+/**
+ * 
+ * @author Dark
+ * Permet de faire des appels à l'API REST de data.nantes.fr pour récupérer les informations en temps réels.
+ */
 public class ServiceRest {
 	
 	/**
@@ -36,6 +40,21 @@ public class ServiceRest {
         return e.getData();
 	}
 	
+	
+	public Emplacement getGeoBenne(Double lat, Double lng) {
+
+		String ret = callHttpRequest("{\"_l\":{\"$near\":["+lat+","+lng+"]}}&limit=1");
+		Emplacements e = parseXML(ret);
+		
+		return e.getData().get(0);
+	}
+	
+	
+	/**
+	 * 
+	 * @param data : la requête à effectuer avec l'API REST, l'adresse de base est déjà inquée dans URL_API_BENNES
+	 * @return Une chaine contenant du XML 
+	 */
 	private String callHttpRequest(String data){
 		String returnString = null;
 		
@@ -72,6 +91,12 @@ public class ServiceRest {
 		return returnString;
 	}
 	
+	
+	/**
+	 * 
+	 * @param xml : la string à remettre en objet
+	 * @return un objet Emplacements
+	 */
 	public Emplacements parseXML(String xml) {
 		final int INDEX_QUARTIER = 3;
 		final int INDEX_COORDONNEES = 5;

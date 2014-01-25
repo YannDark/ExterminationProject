@@ -2,6 +2,11 @@ package fr.epsi.projet.beans;
 
 import java.util.List;
 
+/**
+ * 
+ * @author Dark
+ * Contient le nombre de résultat et une liste de {@link fR.epsi.projet.Emplacement}
+ */
 public class Emplacements {
 	
 	int nb_results;

@@ -2,17 +2,20 @@ package fr.epsi.projet.activity;
 
 import java.util.List;
 
-import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.support.v4.app.FragmentActivity;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import fr.epsi.projet.R;
@@ -20,7 +23,7 @@ import fr.epsi.projet.beans.Emplacement;
 import fr.epsi.projet.common.Constantes;
 import fr.epsi.projet.service.ServiceRest;
 
-public class Map extends Activity {
+public class Map extends FragmentActivity /*implements OnMarkerClickListener*/{
 
 	// Google Map
     private GoogleMap googleMap;
@@ -55,10 +58,23 @@ public class Map extends Activity {
             MarkerOptions marker;
             for (Emplacement e : all) {
             	position = new LatLng(e.get_l()[0], e.get_l()[1]);
-            	marker = new MarkerOptions().position(position).title("Hello Maps ");
+            	marker = new MarkerOptions().position(position).title(e.getAdresse() + " \n" + e.getCommune());
             	marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.icone_benne));
             	googleMap.addMarker(marker);
 			}
+            
+            
+            googleMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
+
+                public void onInfoWindowClick(Marker marker) {
+                	//TODO renvoyer vers l'activité après avoir recherché le plus proche des coordonées
+                    /*Intent i = new Intent(getActivity(), NewActivity.class);
+                    startActivity(i);*/
+                	Emplacement e = serviceRest.getGeoBenne(marker.getPosition().latitude, marker.getPosition().latitude);
+                	Toast.makeText(getApplicationContext(), "Goulou Goulou", Toast.LENGTH_SHORT).show();
+                	System.out.println(marker.getPosition().latitude);
+                }
+            });
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -84,12 +100,5 @@ public class Map extends Activity {
     protected void onResume() {
         super.onResume();
         initilizeMap();
-    }
-    
-    public void displayBottleBank() {
-    	//TODO getting the different bottle banks locations from distant DB
-    	
-    	//TODO display them on the map
-    	
     }
 }
