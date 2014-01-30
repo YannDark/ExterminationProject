@@ -4,6 +4,7 @@ import java.util.List;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v4.app.FragmentActivity;
@@ -67,18 +68,8 @@ public class Maps extends FragmentActivity /*implements OnMarkerClickListener*/{
 
 			googleMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
 
-				public void onInfoWindowClick(Marker marker) {
+				public void onInfoWindowClick(final Marker marker) {
 					
-					//TODO renvoyer vers l'activité après avoir recherché le plus proche des coordonées
-					/*Intent i = new Intent(getActivity(), NewActivity.class);
-            startActivity(i);
-        	Emplacement e = serviceRest.getGeoBenne(marker.getPosition().latitude, marker.getPosition().longitude);
-        	Toast.makeText(getApplicationContext(), e.get_l()[0]  + "-- " + e.get_l()[1], Toast.LENGTH_SHORT).show();
-        	System.out.println(marker.getPosition().latitude + " -- " + marker.getPosition().longitude);
-        	System.out.println(e.get_l()[0] + " -- " + e.get_l()[1]);
-					 */
-
-
 					AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(Maps.this);
 
 					// set title
@@ -86,20 +77,33 @@ public class Maps extends FragmentActivity /*implements OnMarkerClickListener*/{
 
 					// set dialog message
 					alertDialogBuilder
-					.setMessage("Click yes to exit!")
+					//.setMessage("Click yes to exit!")
 					.setCancelable(true)
 					.setPositiveButton("Oui",new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog,int id) {
-							// if this button is clicked, close
-							// current activity
-							Toast.makeText(getApplicationContext(), "Youhou on va à la benne.", Toast.LENGTH_LONG).show();
+							
+					        Emplacement e = serviceRest.getGeoBenne(marker.getPosition().latitude, marker.getPosition().longitude);
+					        
+							//On créé un objet Bundle, c'est ce qui va nous permetre d'envoyer des données à l'autre Activity
+							Bundle extras = new Bundle();
+				 
+							//Cela fonctionne plus ou moins comme une HashMap, on entre une clef et sa valeur en face
+							
+							extras.putDouble("latitude", e.get_l()[0]);
+							extras.putDouble("longitude", e.get_l()[1]);
+							Intent intent = new Intent(Maps.this, Map.class);
+							 
+							//On affecte à l'Intent le Bundle que l'on a créé
+							intent.putExtras(extras);
+				 
+							//On démarre l'autre Activity
+							startActivity(intent);
 						}
 					})
 					.setNegativeButton("Non",new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog,int id) {
 							// if this button is clicked, just close
 							// the dialog box and do nothing
-							Toast.makeText(getApplicationContext(), "Oh non on reste là :(", Toast.LENGTH_LONG).show();
 							dialog.cancel();
 						}
 					});

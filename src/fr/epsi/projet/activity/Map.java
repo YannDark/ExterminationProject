@@ -13,6 +13,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.view.inputmethod.CorrectionInfo;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -74,7 +75,7 @@ public class Map extends Activity {
 			Bundle b = getIntent().getExtras();
 
 			// Set start and finish Location
-			if (b == null) {
+			if (b == null || (b.containsKey("latitude") && b.containsKey("longitude"))) {
 				
 				// Verify location enable (GPS/Network)
 				try{
@@ -95,8 +96,15 @@ public class Map extends Activity {
 					// Set Finish Destination
 					lat = fromPosition.latitude;
 					lng = fromPosition.longitude;                
-
-					Emplacement emplacement = serviceRest.getGeoBenne(lat, lng);
+					
+					Emplacement emplacement = new Emplacement();
+					if(b != null && b.containsKey("latitude") && b.containsKey("longitude")){
+						Double[] coordonnees = {b.getDouble("latitude"), b.getDouble("longitude")};
+						emplacement.set_l(coordonnees);
+					} else {
+						emplacement = serviceRest.getGeoBenne(lat, lng);
+					}
+					
 					toPosition = new LatLng(emplacement.get_l()[0], emplacement.get_l()[1]);
 				}
 			}
@@ -143,6 +151,10 @@ public class Map extends Activity {
 				}                                                                        
 
 				googleMap.addPolyline(rectLine);
+				
+				CameraPosition cameraPosition2 = new CameraPosition.Builder().target(
+						fromPosition).zoom(14).build();
+				googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition2)); 
 			}
 
 		} catch (Exception e) {
