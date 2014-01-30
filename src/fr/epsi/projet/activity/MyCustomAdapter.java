@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.LocationManager;
+import android.os.Bundle;
 import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,7 +48,7 @@ public class MyCustomAdapter extends BaseExpandableListAdapter {
 	public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
 		final SousTitre vl_sousTitres = (SousTitre) getChild(groupPosition, childPosition);
 
-		ChildViewHolder childViewHolder;
+		final ChildViewHolder childViewHolder;
 		EditText editTest = null; 
 		
         if (convertView == null) {
@@ -70,7 +71,11 @@ public class MyCustomAdapter extends BaseExpandableListAdapter {
         childViewHolder.buttonChild.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) { 
-				Intent myIntent = new Intent(vl_context , Maps.class);
+				// Retourne le texte de l'adresse
+				EditText myETAdresse = (EditText) childViewHolder.textViewChild;
+			    String myAdresse = myETAdresse.getText().toString();
+				Intent myIntent = new Intent(vl_context , Map.class);
+				myIntent.putExtra("adress", myAdresse);
 				vl_context.startActivity(myIntent);
 			}
 		});
@@ -128,7 +133,7 @@ public class MyCustomAdapter extends BaseExpandableListAdapter {
 	            }catch(Exception ex){}
 	            
 	           //on va sur le chemin le plus proche de l'utilisateur et la benne la plus proche 
-	           if(position == 0){
+               if(position == 1){
 	        	   if(gps_enabled || network_enabled)
 		            {
 						Intent myIntent = new Intent(vl_context , Map.class);
@@ -158,7 +163,7 @@ public class MyCustomAdapter extends BaseExpandableListAdapter {
 		                builder.create().show();
 		            }
 	           }
-	           else if(position == 1){ // on affiche toutes les bennes 
+	           else if(position == 2){ // on affiche toutes les bennes 
 	        	   Intent myIntent = new Intent(vl_context , Maps.class);
 	        	   vl_context.startActivity(myIntent);
 	           }

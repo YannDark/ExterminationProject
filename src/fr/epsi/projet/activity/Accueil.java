@@ -2,17 +2,19 @@ package fr.epsi.projet.activity;
 
 import java.util.ArrayList;
 
+import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
-import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 import fr.epsi.projet.R;
+import fr.epsi.projet.common.Constantes;
 
 public class Accueil extends Activity {
 
@@ -46,20 +48,20 @@ public class Accueil extends Activity {
 	    boutonInfos = (Button) findViewById(R.id.infosSup);
 	    
 	    ArrayList<Titre> menuDeroulant = new ArrayList<Titre>();
-	    //menuDeroulant.add(new Titre("Entrer une adresse"));
+	    menuDeroulant.add(new Titre("Entrer une adresse"));
 	    menuDeroulant.add(new Titre("Localiser ma position"));
 	    menuDeroulant.add(new Titre("Afficher la carte globale"));
 	    
-	    //ArrayList<SousTitre> sousTitreAdresse = new ArrayList<SousTitre>();
-	    //sousTitreAdresse.add(new SousTitre(menuDeroulant.get(0), "Sous-Titre Adresse"));
+	    ArrayList<SousTitre> sousTitreAdresse = new ArrayList<SousTitre>();
+	    sousTitreAdresse.add(new SousTitre(menuDeroulant.get(0), "Sous-Titre Adresse"));
 	    
 	    ArrayList<SousTitre> sousTitrePosition = new ArrayList<SousTitre>();
-	    sousTitrePosition.add(new SousTitre(menuDeroulant.get(0), "Sous-Titre Position"));
+	    sousTitrePosition.add(new SousTitre(menuDeroulant.get(1), "Sous-Titre Position"));
 	    
 	    ArrayList<SousTitre> sousTitreCarte = new ArrayList<SousTitre>();
-	    sousTitreCarte.add(new SousTitre(menuDeroulant.get(1), "Sous-Titre Localisation Carte"));
+	    sousTitreCarte.add(new SousTitre(menuDeroulant.get(2), "Sous-Titre Localisation Carte"));
 	    
-	    //menuDeroulant.get(0).setSousTitres(sousTitreAdresse);
+	    menuDeroulant.get(0).setSousTitres(sousTitreAdresse);
 	    
 	    MyCustomAdapter customAdapt = new MyCustomAdapter(this, menuDeroulant);
 	    
