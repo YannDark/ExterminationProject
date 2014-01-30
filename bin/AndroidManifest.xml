@@ -41,8 +41,8 @@
         </activity>
         <activity android:name="fr.epsi.projet.activity.AffichageinfosComplementaires" />
         <activity android:name="fr.epsi.projet.activity.Map" />
-		<activity android:name="fr.epsi.projet.activity.Maps" />
-		
+                <activity android:name="fr.epsi.projet.activity.Maps" />
+                
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />

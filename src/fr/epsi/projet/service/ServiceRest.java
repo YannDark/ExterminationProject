@@ -27,32 +27,29 @@ import fr.epsi.projet.common.Constantes;
  * Permet de faire des appels à l'API REST de data.nantes.fr pour récupérer les informations en temps réels.
  */
 public class ServiceRest {
-	
+
 	/**
 	 * @return la liste d'emplacement où se trouve les bennes à verre.
 	 */
 	public List<Emplacement> getBennes() {
-		
+
 		//liste de toutes les bennes à verres au format xml
 		String ret = callHttpRequest("{\"TYPE_DECHETS\":{\"$eq\":\"verre_ent\"}}");
 		Emplacements e = parseXML(ret);	   
-		
-        return e.getData();
+
+		return e.getData();
 	}
-	
-	
+
+
 	public Emplacement getGeoBenne(Double lat, Double lng) {
 
-		//String ret = callHttpRequest("{\"_l\":{\"$near\":["+lat+","+lng+"]}}&limit=1");
-		//String ret = callHttpRequest("{\"TYPE_DECHETS\":{\"$eq\":\"verre_ent\"},\"location\":{\"$near\":["+lat+","+lng+"]}}");
-		//{"$and":[{"ANNEE_NAISSANCE":{"$gte":"2010-01-01T00:00:00.000Z"}},{"SEXE":{"$eq":"FILLE"}}]}
 		String ret = callHttpRequest("{\"$and\":[{\"TYPE_DECHETS\":{\"$eq\":\"verre_ent\"}},{\"_l\":{\"$near\":["+lat+","+lng+"]}}]}");
 		Emplacements e = parseXML(ret);
-		
+
 		return e.getData().get(0);
 	}
-	
-	
+
+
 	/**
 	 * 
 	 * @param data : la requête à effectuer avec l'API REST, l'adresse de base est déjà inquée dans URL_API_BENNES
@@ -60,9 +57,9 @@ public class ServiceRest {
 	 */
 	private String callHttpRequest(String data){
 		String returnString = null;
-		
+
 		try {
-			
+
 			URL url = new URL(Constantes.URL_API_BENNES + data);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod("GET");
@@ -93,8 +90,8 @@ public class ServiceRest {
 
 		return returnString;
 	}
-	
-	
+
+
 	/**
 	 * 
 	 * @param xml : la string à remettre en objet
@@ -105,26 +102,26 @@ public class ServiceRest {
 		final int INDEX_COORDONNEES = 5;
 		final int INDEX_COMMUNE = 10;
 		final int INDEX_ADRESSE = 15;
-		
+
 		Emplacements e = new Emplacements();
-		
+
 		try {
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();			
-			
+
 			//InputStream is = new ByteArrayInputStream(xml.getBytes());
 			System.out.println(xml);
 			InputSource is = new InputSource(new StringReader(xml));
 			Document doc = dBuilder.parse(is);
 			doc.getDocumentElement().normalize();
-			
+
 			NodeList list = doc.getElementsByTagName("nb_results"); 
 			e.setNb_results(Integer.parseInt(list.item(0).getChildNodes().item(0).getNodeValue()));
-			
+
 			//liste d'emplacement
 			list = doc.getElementsByTagName("element");
 			System.out.println("nombre personne : " + list.getLength());
-			
+
 			e.setData(new ArrayList<Emplacement>());
 			Emplacement emp = null;
 			int max = e.getNb_results();
@@ -138,17 +135,17 @@ public class ServiceRest {
 				temp[1] = temp[1].substring(0, temp[1].length() -1);
 				Double[] coordonnees = {Double.parseDouble(temp[0]),Double.parseDouble(temp[1])} ;
 				emp.set_l(coordonnees);
-				
+
 				emp.setQuartier(n.item(INDEX_QUARTIER).getChildNodes().item(0).getNodeValue());
 				emp.setCommune(n.item(INDEX_COMMUNE).getChildNodes().item(0).getNodeValue());
 				emp.setAdresse(n.item(INDEX_ADRESSE).getChildNodes().item(0).getNodeValue());
-				
+
 				e.getData().add(emp);
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		
+
 		return e;
 	}
 }
