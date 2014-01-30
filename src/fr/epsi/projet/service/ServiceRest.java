@@ -43,7 +43,10 @@ public class ServiceRest {
 	
 	public Emplacement getGeoBenne(Double lat, Double lng) {
 
-		String ret = callHttpRequest("{\"_l\":{\"$near\":["+lat+","+lng+"]}}&limit=1");
+		//String ret = callHttpRequest("{\"_l\":{\"$near\":["+lat+","+lng+"]}}&limit=1");
+		//String ret = callHttpRequest("{\"TYPE_DECHETS\":{\"$eq\":\"verre_ent\"},\"location\":{\"$near\":["+lat+","+lng+"]}}");
+		//{"$and":[{"ANNEE_NAISSANCE":{"$gte":"2010-01-01T00:00:00.000Z"}},{"SEXE":{"$eq":"FILLE"}}]}
+		String ret = callHttpRequest("{\"$and\":[{\"TYPE_DECHETS\":{\"$eq\":\"verre_ent\"}},{\"_l\":{\"$near\":["+lat+","+lng+"]}}]}");
 		Emplacements e = parseXML(ret);
 		
 		return e.getData().get(0);

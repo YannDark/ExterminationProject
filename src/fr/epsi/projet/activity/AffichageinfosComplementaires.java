@@ -1,9 +1,9 @@
 package fr.epsi.projet.activity;
 
-import fr.epsi.projet.R;
 import android.app.Activity;
 import android.os.Bundle;
 import android.widget.EditText;
+import fr.epsi.projet.R;
 
 public class AffichageinfosComplementaires extends Activity {
 	

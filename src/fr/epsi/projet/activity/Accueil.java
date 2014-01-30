@@ -2,19 +2,17 @@ package fr.epsi.projet.activity;
 
 import java.util.ArrayList;
 
-import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import fr.epsi.projet.R;
-import fr.epsi.projet.common.Constantes;
 
 public class Accueil extends Activity {
 
